@@ -124,7 +124,6 @@ local HookLib = {
         CreateMove = nil,
         PaintTraverse = nil,
         DrawModelExecute = nil,
-        OverrideView = nil,
         LockCursor = nil
     },
     
@@ -749,14 +748,14 @@ function HookLib.hook_physics_simulate(callback)
 end
 
 function HookLib.hook_create_move(callback)
-    local client = HookLib.get_interface("client.dll", "VClient018")
-    if not client then
+    local client_interface = HookLib.get_interface("client.dll", "VClient018")
+    if not client_interface then
         error("Failed to get Client interface")
     end
     
     local vmt_hook = HookLib.convenience.CreateMove
     if not vmt_hook then
-        vmt_hook = HookLib.create_vmt_hook(client)
+        vmt_hook = HookLib.create_vmt_hook(client_interface)
         HookLib.convenience.CreateMove = vmt_hook
     end
     
@@ -802,17 +801,6 @@ function HookLib.hook_draw_model_execute(callback)
     return vmt_hook
 end
 
-function HookLib.hook_override_view(callback)
-    local client_mode = HookLib.get_interface("client.dll", "VCLient018")
-    if not client_mode then
-        local client = HookLib.get_interface("client.dll", "VCLient018")
-        if not client then
-            error("Failed to get Client interface")
-        end
-        error("ClientMode hooking requires additional pattern scanning")
-    end
-end
-
 function HookLib.hook_lock_cursor(callback)
     local surface = HookLib.get_interface("vguimatsurface.dll", "VGUI_Surface")
     if not surface then
@@ -824,18 +812,6 @@ function HookLib.hook_lock_cursor(callback)
     
     HookLib.convenience.LockCursor = vmt
     return vmt
-end
-
-function HookLib.hook_clamp_bones_in_bbox(callback)
-    local pattern = "\x55\x8B\xEC\x83\xE4\xF8\x83\xEC\x70\x56\x57\x8B\xF9\x89\x7C\x24\x38\x83"
-    return HookLib.create_detour(
-        "void(__fastcall*)(void*, void*, void*, int)",
-        callback,
-        pattern,
-        "client.dll",
-        5,
-        true
-    )
 end
 
 function HookLib.disable_all_hooks()
