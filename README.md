@@ -402,9 +402,6 @@ Hooks DrawModelExecute function.
 #### `HookLib.hook_lock_cursor(callback)`
 Hooks LockCursor function.
 
-#### `HookLib.hook_clamp_bones_in_bbox(callback)`
-Hooks ClampBonesInBBox function.
-
 **Example:**
 ```lua
 HookLib.hook_create_move(function(sequence_number, input_sample_frametime, active, send_packet)
